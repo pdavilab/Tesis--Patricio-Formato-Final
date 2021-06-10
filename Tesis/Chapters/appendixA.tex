@@ -1,0 +1,935 @@
+\chapter{Apéndice}
+Las funciones para la lectura de las cookies y el muestreo del grafo. El código y los archivos para replicar en parte los resultados de la tesis se encuentran adicionalmente en \href{https://github.com/pdavilab/tesis_ergms}{https://github.com/pdavilab/tesis\_ergms}
+
+Codigo de R para hacer los modelos de \textit{ergm}.
+
+\begin{lstlisting}[language=R]
+---
+title: "Expanded Lotame ERGM Model"
+author: "Patricio Davila"
+date: "9/8/2020"
+output: html_document
+---
+
+```{r, warning=FALSE,echo=FALSE}
+#rm(list = ls())
+library(tidyverse)
+library(statnet)
+library(coda)
+library(network)
+library(sna)
+library(network)
+library(igraph)
+library(intergraph)
+
+```
+
+```{r}
+
+expit <- function(x){
+  Things <- exp(x)/(1+exp(x))
+  return(Things)
+}
+library(tidyverse)
+
+RegresaLogOdds <- function(coef,Cuantas){
+  #acepta dos para cada argumento 
+  #Aristas es una
+  #Triangulo es 3
+  Factor <- c()
+  for(i in seq(coef)){
+    FUN <- Cuantas[i]
+    #print(FUN)
+    Valor <- coef[i]
+    #print(Valor)
+    Factor[i] <- Valor*FUN
+    #print(Probabilidad)
+  }
+  log_odds <- Factor
+  #Probabilidad <- expit(Probabilidad)
+  return(log_odds)
+}
+
+RegresaProbabilidad <- function(log_odds){
+  log_odds <- sum(log_odds)
+  Thing <- expit(log_odds)
+  return(Thing)
+}
+
+
+
+FuncionAcumulada <- function(Coefs,Cambio){
+  IndexSave2 <- list()
+IndexSave <- list()
+
+
+for(i in seq(100)){
+  logOddsFlorentino <- RegresaLogOdds(c(Coefs),
+  c(Cambio,i-1))
+  logOddsFlorentino
+ProbabilidadFlorentina <- RegresaProbabilidad
+(logOddsFlorentino)
+ProbabilidadFlorentina
+  IndexSave2[i] <- list(logOddsFlorentino)
+  IndexSave[i] <- ProbabilidadFlorentina
+}
+
+  return(list(IndexSave2,IndexSave))
+}  
+
+
+```
+
+```{r}
+MasterTable <- read.csv(
+    "WeightedExpandedReplacedEdgelist.csv")
+#The 5701 classified taxonomy elements
+Taxonomy <- read.csv("TaxonomyMain.csv")
+
+#CustomTaxonomy
+Nodes <-  Taxonomy %>% 
+as.tibble() %>%
+mutate(node_id = seq(
+1:length(Taxonomy$Node_ID))) %>% 
+#separate(Node_Name,
+into = paste0(seq(1:10)),sep="[^]") %>% 
+mutate(Node_Name = 
+str_replace(Node_Name,"-","[^]"))
+
+LDXShopping <- dplyr::filter(Nodes, 
+grepl('Shopping|Retail|Market|Gift|Purchase',
+`Node_Name`))
+
+LDXCategory <- dplyr::filter(Nodes, grepl(
+'Lotame Category Hierarchy', `Node_Name`))
+
+NodeList <- rbind(LDXShopping,LDXCategory) %>% 
+unique()
+#just making sure all of 
+our edgelist elements are 
+in any of the 2483 nodes 
+of the two original 
+chosen taxonomies
+Mastaa <- MasterTable %>% 
+  inner_join(select(NodeList, Node_ID),
+  by=c("To"="Node_ID")) %>% 
+  inner_join(select(NodeList, Node_ID), 
+  by=c("From"="Node_ID")) %>% 
+  rename(
+    from = From,
+    to = To
+    )
+
+
+```
+
+```{r}
+
+NodesX <- read.csv(
+"node_level_data_Shorthand_Reducido.csv")
+
+
+#Add removing Factor level five.
+
+Nodes <- NodesX %>% 
+  #select(-c(Arbol_8)) %>% 
+  #select(-c(Arbol_7)) %>% 
+  #select(-c(Arbol_6)) %>% 
+  #select(-c(Arbol_5)) %>% 
+  #group_by(To, From,ToId,FromId) %>% 
+  #summarise(weight = n()) %>% 
+  ungroup() %>% 
+  mutate(Node_ID = as.factor(Node_ID))
+
+NewNodeList <- NodesX %>% 
+  filter(Node_ID == NEWID) %>% 
+  #select(-c(Arbol_8)) %>% 
+  #select(-c(Arbol_7)) %>% 
+  #select(-c(Arbol_6)) %>% 
+  #select(-c(Arbol_5)) %>% 
+  #group_by(To, From,ToId,FromId) %>% 
+  #summarise(weight = n()) %>% 
+  ungroup() %>% 
+  mutate(Node_ID = as.factor(Node_ID)) %>% 
+  mutate(Node_ID = as.character(Node_ID)) %>% 
+  mutate(NEWID = as.character(NEWID))
+
+
+EdgeFin <- Mastaa %>% 
+  filter(as.character(from) %in% 
+  NewNodeList$NEWID) %>% 
+  filter(as.character(to) %in% 
+  NewNodeList$NEWID)
+
+EdgeFin <- EdgeFin %>% 
+  group_by(to, from) %>% 
+  filter(to != from) %>% 
+  summarise(weight= sum(freq)) %>%
+  ungroup() %>% 
+  filter(from %in% NewNodeList$NEWID) %>% 
+  filter(to %in% NewNodeList$NEWID)
+
+net <- igraph::graph_from_data_frame(d = EdgeFin, 
+vertices = NewNodeList,directed = FALSE)
+
+directed_graph_wgt <- graph.data.frame(EdgeFin, 
+directed = TRUE, vertices = NewNodeList)
+undirected_graph_wgt <- as.undirected(
+directed_graph_wgt, mode = "collapse",
+edge.attr.comb = "sum")
+
+
+```
+```{r}
+
+set.seed(141719)
+Empieza <- asNetwork(undirected_graph_wgt)
+#summary(Empieza)
+#Modelling
+#save(Empieza, file = "stuff.RData")
+l <- layout_on_sphere(net)
+l2 <- layout_with_fr(net)
+V(net)$size <- 8
+colrs <- sample(colors(),45)
+V(net)$frame.color <- "black"
+V(net)$group_id <- as_tibble(
+V(net)$ShortName_General) %>% 
+group_by(value)%>% group_indices(value) 
+V(net)$color <- colrs[V(net)$group_id]
+V(net)$label <- "" 
+E(net)$arrow.mode <- 0
+plot(net, vertex.cex=.05,
+vertex.label=NA,layout=l2)
+
+```
+
+```{r}
+#Quantile 20 cut off
+
+cutoff <- quantile(EdgeFin$weight)
+EdgeFinR <- EdgeFin %>% 
+  filter(as.numeric(weight) >= 46)
+
+net <- igraph::graph_from_data_frame(
+d = EdgeFinR, 
+vertices = NewNodeList,directed = FALSE)
+
+directed_graph_wgt <- graph.data.frame(
+EdgeFinR, directed = TRUE, 
+vertices = NewNodeList)
+undirected_graph_wgt <- as.undirected(
+directed_graph_wgt, mode = "collapse",
+edge.attr.comb = "sum")
+
+components <- igraph::
+clusters(undirected_graph_wgt, 
+mode="weak")
+biggest_cluster_id <- 
+which.max(components$csize)
+
+# ids
+vert_ids <- V(undirected_graph_wgt)
+[components$membership == 
+biggest_cluster_id]
+
+# subgraph
+biggestC <- igraph::induced_subgraph(
+undirected_graph_wgt, vert_ids)
+Empieza2 <- asNetwork(biggestC)
+
+
+max_subgraph_graph <- biggestC
+Empieza <- asNetwork(biggestC)
+
+logweight <- EdgeFin %>% 
+mutate(log_wg = log(weight)) %>%
+.$log_wg
+hist (logweight,
+main="Histograma de los 
+log peso del grafo completo",
+xlab="Valor de los log peso",
+border="Chocolate2",
+col="pink",
+las=2,
+breaks=75,
+prob = TRUE)
+
+
+EdgeFinR %>% mutate(log_wg = log(weight)) %>% 
+.$log_wg %>%
+hist (logweight,
+main="Histograma de 
+los log peso del subgrafo inducido",
+xlab="Valor de los log peso",
+border="Chocolate2",
+col="pink",
+las=2,
+breaks=75,
+prob = TRUE)
+
+library(RColorBrewer)
+set.seed(14119)
+l <- layout_on_sphere(max_subgraph_graph)
+l <- layout_with_fr(max_subgraph_graph)
+V(max_subgraph_graph)$size <- 8
+colrs <- sample(colors(),45)
+V(max_subgraph_graph)$frame.color <- "white"
+V(max_subgraph_graph)$group_id <- as_tibble(
+V(max_subgraph_graph)$ShortName_General) %>% 
+group_by(value)%>% group_indices(value) 
+V(max_subgraph_graph)$color <- 
+colrs[V(max_subgraph_graph)$group_id]
+V(max_subgraph_graph)$label <- ""
+E(max_subgraph_graph)$arrow.mode <- 0
+l <- layout_in_circle(max_subgraph_graph)
+plot(max_subgraph_graph,layout=l)
+```
+
+
+
+
+```{r,eval=FALSE}
+max_subgraph <- max_cliques(
+max_subgraph_graph, min = NULL, 
+max = NULL, subset = NULL,
+  file = NULL)
+
+max = 0
+for (i in seq(length(max_subgraph))){
+  size = length(max_subgraph[[i]])
+  if(size > max){
+    max = size
+    index = i
+  }
+}
+
+max_subgraph_graph <- induced_subgraph(
+  max_subgraph_graph,
+  max_subgraph[[index]]
+)
+Empieza <- asNetwork(max_subgraph_graph)
+```
+```{r,eval=FALSE}
+library(RColorBrewer)
+set.seed(141719)
+l <- layout_on_sphere(max_subgraph_graph)
+l <- layout_with_fr(max_subgraph_graph)
+V(max_subgraph_graph)$size <- 8
+colrs <- sample(colors(),45)
+V(max_subgraph_graph)$frame.color <- "white"
+V(max_subgraph_graph)$group_id <- as_tibble(
+V(max_subgraph_graph)$ShortName_General) %>% 
+group_by(value)%>% group_indices(value) 
+V(max_subgraph_graph)$color <- 
+colrs[V(max_subgraph_graph)$group_id]
+V(max_subgraph_graph)$label <- "" 
+E(max_subgraph_graph)$arrow.mode <- 0
+plot(max_subgraph_graph,layout=l)
+```
+
+
+```{r}
+set.seed(141719)
+#-3.2598822  0.0216762
+#-3.2603808,0.0216776
+#-3.26104824  0.02167921 
+#-3.26154720  0.02168062 
+edge_triangleF <- ergm(Empieza2~edges+triangles,
+control = control.ergm(seed=141719,
+init = c(-3.26154720 ,0.02168062),
+MCMLE.maxit = 1,MCMC.samplesize=10240
+,MCMC.interval=4096,parallel =4,
+parallel.type="PSOCK"),
+control.SAN = control.san(SAN.maxit = 800, 
+SAN.tau = 1, SAN.invcov = NULL,
+SAN.invcov.diag = FALSE, 
+SAN.nsteps.alloc = function(nsim)
+4^seq_len(nsim), SAN.nsteps = 4^19, 
+SAN.samplesize =84^12,
+SAN.init.maxedges = 20000, 
+SAN.max.maxedges = 2^26,
+SAN.prop.weights = "default", 
+SAN.prop.args = list(),
+SAN.packagenames = c(), 
+term.options = list(), seed = NULL,
+parallel = 0, parallel.type = NULL, 
+parallel.version.check = TRUE),
+verbose=T)
+
+# 16.5167         -15.2282           
+0.5574 
+edges_alt_kF <- ergm(Empieza2~
+edges+altkstar(1, fixed=FALSE),
+control = control.ergm(seed=141719,
+MCMC.samplesize=10240,
+MCMC.interval=4096,parallel=4,
+parallel.type="PSOCK"),
+verbose=T)
+
+# edges                     
+altkstar         
+altkstar.lambda  
+#                   15.77352                
+-14.65663                 
+0.55356  
+#nodematch.ShortName_General  
+#                   -0.09923  
+edges_alt_k_generalF <- ergm(Empieza2~
+edges+altkstar(0.55356, fixed=FALSE)+
+nodematch("ShortName_General"),
+control = control.ergm(seed=141719,
+init = c(15.77352,-14.65663,-0.09923),
+MCMC.samplesize=10240,MCMC.interval=4096,
+parallel=4,
+parallel.type="PSOCK"),
+verbose=T)
+
+edges_only <- ergm(Empieza2~edges,
+control = control.ergm(seed=141719,
+parallel=4,
+parallel.type="PSOCK"),
+verbose=T)
+
+edges_alt_k_specificF <- ergm(Empieza2~
+edges+altkstar(1, fixed=FALSE)+
+nodematch("ShortName_Specific"),
+control = control.ergm(
+seed=141719,MCMC.samplesize=10240,
+MCMC.interval=4096,parallel=4,
+parallel.type="PSOCK"),
+verbose=T)
+#########################MODEL 1##############
+
+name <- "edge_triangle3"
+model <- edge_triangleF
+
+#alt_k_edge_model
+  
+summary(model)
+pdf(paste('mcmc_diagnostics',name,'.pdf'))
+mcmc.diagnostics(model)
+dev.off() 
+
+
+######################MODEL2####################
+
+
+name <- "edges_alt_kF3"
+model <- edges_alt_kF
+
+#alt_k_edge_model
+  
+summary(model)
+pdf(paste('mcmc_diagnostics',name,'.pdf'))
+mcmc.diagnostics(model)
+dev.off() 
+
+
+
+###########################Model 3 ###########
+
+name <- "edges_alt_k_generalF3"
+model <- edges_alt_k_generalF
+
+#alt_k_edge_model
+  
+summary(model)
+pdf(paste('mcmc_diagnostics',name,'.pdf'))
+mcmc.diagnostics(model)
+dev.off()
+
+#################Model 4###############
+
+name <- "edges_alt_k_specificF3"
+model <- edges_alt_k_specificF
+
+#alt_k_edge_model
+  
+summary(model)
+pdf(paste('mcmc_diagnostics',name,'.pdf'))
+mcmc.diagnostics(model)
+dev.off()
+```
+
+```{r}
+summary(edge_triangleF)
+summary(edges_alt_kF)
+summary(edges_alt_k_generalF)
+summary(edges_alt_k_specificF)
+```
+
+```{r,eval=FALSE}
+#Lotame.01.gof <- gof(edge_triangleF~
+degree + esp + distance, 
+control.gof.formula(nsim=10))
+Lotame.02.gof <- gof(edges_alt_kF~degree 
++ esp + distance, 
+control.gof.formula(nsim=10))
+Lotame.03.gof <- gof(edges_alt_k_generalF~
+degree + 
+esp + distance, 
+control.gof.formula(nsim=10))
+Lotame.04.gof <- gof(edges_alt_k_specificF~
+degree + 
+esp + distance, 
+control.gof.formula(nsim=10))
+```
+
+
+```{r,eval=FALSE}
+#plot(Lotame.01.gof)
+
+summary(model)
+pdf(paste('GOF ALL',"Aca",'.pdf'))
+plot(Lotame.02.gof)
+plot(Lotame.03.gof)
+plot(Lotame.04.gof)
+dev.off()
+
+```
+
+```{r,eval=FALSE}
+Lotame.01.sim <- simulate(edge_triangleF,
+nsim=10)
+rbind("obs"=summary(edge_triangleF),
+"sim mean"=
+colMeans(attr(Lotame.01.sim, "stats")))
+
+Lotame.02.sim <- simulate(edges_alt_kF,nsim=10)
+rbind("obs"=summary(edges_alt_kF),
+"sim mean"=colMeans(attr(Lotame.02.sim, "stats")))
+
+Lotame.03.sim <- simulate(edges_alt_k_generalF,
+nsim=10)
+rbind("obs"=summary(edges_alt_k_generalF),
+"sim mean"=colMeans(attr(Lotame.03.sim, "stats")))
+
+Lotame.04.sim <- simulate(edges_alt_k_specificF,
+nsim=10)
+rbind("obs"=summary(edges_alt_k_specificF),
+"sim mean"=colMeans(attr(Lotame.04.sim, "stats")))
+```
+
+
+```{r,eval=FALSE}
+
+model1sim <- asIgraph(Lotame.01.sim[[1]])
+
+net <- Lotame.01.sim[[1]]
+l2 <- layout_with_fr(net)
+V(net)$size <- 8
+colrs <- sample(colors(),45)
+V(net)$frame.color <- "black"
+V(net)$group_id <- as_tibble(
+V(net)$ShortName_General) %>% 
+group_by(value)%>% group_indices(value) 
+V(net)$color <- colrs[V(net)$group_id]
+V(net)$label <- "" 
+E(net)$arrow.mode <- 0
+
+plot(Lotame.01.sim[[1]], 
+ label= Lotame.01.sim[[1]] %v%
+ "ShortName_General",
+ vertex.cex = .25,layout=l2)
+
+model2sim <- asIgraph(Lotame.02.sim[[1]])
+
+net <- Lotame.02.sim[[1]]
+l2 <- layout_with_fr(net)
+V(net)$size <- 8
+colrs <- sample(colors(),45)
+V(net)$frame.color <- "black"
+V(net)$group_id <- as_tibble(
+V(net)$ShortName_General) %>% 
+group_by(value)%>% group_indices(value) 
+V(net)$color <- colrs[V(net)$group_id]
+V(net)$label <- "" 
+E(net)$arrow.mode <- 0
+
+plot(Lotame.02.sim[[1]], 
+ label= Lotame.02.sim[[1]]
+ %v% "ShortName_General",
+ vertex.cex = .25,layout=l)
+
+model3sim <- asIgraph(
+Lotame.03.sim[[1]])
+
+net <- Lotame.03.sim[[1]]
+l2 <- layout_with_fr(net)
+V(net)$size <- 8
+colrs <- sample(colors(),45)
+V(net)$frame.color <- "black"
+V(net)$group_id <- as_tibble(
+V(net)$ShortName_General) %>%
+group_by(value)%>% group_indices(value) 
+V(net)$color <- colrs[V(net)$group_id]
+V(net)$label <- "" 
+E(net)$arrow.mode <- 0
+
+plot(Lotame.03.sim[[1]], 
+ label= Lotame.03.sim[[1]] %v% 
+ "ShortName_General",
+ vertex.cex = .25,layout=l)
+
+model4sim <- asIgraph(Lotame.04.sim[[1]])
+
+net <- Lotame.04.sim[[1]]
+l2 <- layout_with_fr(net)
+V(net)$size <- 8
+colrs <- sample(colors(),45)
+V(net)$frame.color <- "black"
+V(net)$group_id <- as_tibble(
+V(net)$ShortName_General) %>% 
+group_by(value)%>% group_indices(value) 
+V(net)$color <- colrs[V(net)$group_id]
+V(net)$label <- "" 
+E(net)$arrow.mode <- 0
+
+plot(Lotame.04.sim[[1]], 
+label= Lotame.04.sim[[1]] 
+%v% "ShortName_General",
+vertex.cex = .25,layout=l)
+```
+
+
+
+
+
+\end{lstlisting}
+
+Codigo de python para leer las cookies y hacer nuestro \textit{edgelist}.
+
+\begin{lstlisting}[language=Python]
+# %%
+import json
+import pandas as pd
+import itertools
+import ast
+from pandas.io.json import json_normalize 
+import os
+import ast
+import numpy as np
+import gzip
+import shutil
+
+def Read_Cookies(filenames,stop_max=False):
+looperino = 1
+with open(filenames,"r",encoding="UTF-8", 
+errors="ignore") as in_file:
+dicts = []
+for line in in_file.readlines(): 
+    d = json.loads(line.strip())
+    dicts += [d]
+    looperino = looperino +1
+if (looperino > 2500) and (stop_max == True):
+    break
+return(dicts)
+
+#Get mappiings
+def get_dictionary_mappings():
+with open('mappings.json',"r",
+encoding="UTF-8",errors = 'ignore')as infile:
+    mappings = []
+    for line in infile.readlines(): 
+        d = json.loads(line.strip())
+        mappings += [d]
+mappper=[]
+for map in mappings:
+    beh_id = map['behavior_id']
+    hierarchy_nodes = map['hierarchy_nodes']
+    for hierarchy in hierarchy_nodes:
+    mappper.append((
+    beh_id,hierarchy['id'],hierarchy['path']))
+
+df = pd.DataFrame(mappper, columns=
+['beh_id','tax_id',
+"path_id"])
+diccionario_relevante = df[["beh_id","tax_id"]]
+diccionario_relevante = diccionario_relevante.
+astype(int)
+diccionario_relevante = diccionario_relevante.
+astype(str)
+# diccionario_relevante = diccionario_relevante.
+select_dtypes(include='str')
+diccionario_relevante_dict = diccionario_relevante.
+set_index('beh_id').to_dict()['tax_id']
+return(diccionario_relevante_dict)
+
+diccionario_relevante_dict = get_dictionary_mappings()
+
+def replace_id_beh_for_taxonomy_node():
+working_df = pd.read_csv("WeightedEdgelist.csv")
+working_df = working_df.loc[:,
+~working_df.columns.str.contains('^Unnamed')]
+working_df = working_df.astype(int)
+working_df = working_df.astype(str)
+# work = working_df.select_dtypes(include='str')
+i=0
+fails = pd.DataFrame()
+table = pd.DataFrame()
+for chunk in np.array_split(working_df, 250):
+print(i)
+try:
+chunkerino = chunk.replace({'
+To':diccionario_relevante_dict})
+chunkerino = chunkerino.replace(
+{'From':diccionario_relevante_dict})
+table = pd.concat([table,chunkerino])
+except TypeError as identifier:
+print("failed at",i)
+fails = pd.concat([fails,chunk])
+pass
+i = i+1
+table = table[table['To'] != table['From']]
+# table = table.to_csv('replacededgelist_aux.csv')
+return table
+
+def reduce_total_taxonomy_
+edgelist_to_category_shopping_taxonomy(
+table,diccionario_relevante_dict):
+reducido = pd.read_csv(
+"FolderAsesorSinodal/node_level_data_
+Shorthand_Reducido.csv").dropna()
+tablenew = table.loc[table['To'].isin(
+list(reducido['Node_ID']))]
+tablenew = tablenew.loc[table['From'].isin(
+list(reducido['Node_ID']))]
+diccionario_relevante = reducido[["Node_ID","NEWID"]]
+diccionario_relevante = diccionario_relevante.
+astype(int)
+diccionario_relevante = diccionario_relevante.
+astype(str)
+# diccionario_relevante = diccionario_relevante.
+select_dtypes(include='str')
+diccionario_relevante_dict = diccionario_relevante.
+set_index('Node_ID').to_dict()['NEWID']
+final_table = tablenew.replace(
+{'To':diccionario_relevante_dict})
+final_table = final_table.replace(
+{'From':diccionario_relevante_dict}).
+groupby(["To","From"]).sum().reset_index()
+final_table = final_table.loc[:,
+~final_table.columns.str.contains('^Unnamed')]
+final_table.to_csv("
+WeightedExpandedReplacedEdgelist.csv",
+index=False)
+return(final_table)
+
+
+def get_file_type(filepath,typerino):
+all_files = []
+for root, dirs, files in os.walk(filepath):
+    files = glob.glob(os.path.join(root,'*'+typerino))
+    for f in files :
+        all_files.append(os.path.abspath(f))
+return all_files
+
+
+def CreateHierarchyEdgelist_optim(
+dicts,filename):
+# import ast
+iter = 0
+Listed = []
+Listed2 = []
+ListOfLists = []
+ListOfLists2 = []
+TimeStampList = []
+InnerIter = 1
+for record in dicts:
+events = record['events'][0]
+if 'add' in events.keys():
+TimeStamp = events['ts']
+EventList = events['add']
+else:
+TimeStamp = events['ts']
+EventList = events['remove']
+Listed = []
+Listed2 = []
+for happen in EventList:
+DataF = Taxonomy[Taxonomy[
+'behavior_id'] == happen]
+if DataF.empty:
+NADA = "Nada"
+else:
+for i in range(len(DataF)):
+    Hier = Taxonomy[Taxonomy
+    ['behavior_id'] == happen].
+    reset_index()['behavior_id'][i]
+    Hier = str(Hier)
+    Listed.append(Hier)
+ListOfLists.append(list(
+pd.Series(Listed, name='A')
+.unique()))
+ListOfLists2.append(Listed2)
+TimeStampList.append(TimeStamp)
+iter = iter + 1
+if iter % 50 ==0: 
+a = ListOfLists
+a2 = ListOfLists2
+Edges = []
+EdgesTax = []
+TimeAuxList = []
+for i in range(len(ListOfLists)):
+if len(ListOfLists[i]) > 50:
+    ListOfLists[i] = ListOfLists[i][0:50]
+h = itertools.combinations(ListOfLists[i], 2)
+TimeAux = TimeStampList[i]
+for comb in h:
+    Edges.append(comb)
+    TimeAuxList.append(TimeAux)
+for lists in a2:
+if len(lists) > 50:
+    lists = lists[0:50]
+h2 = itertools.combinations(lists,2)
+Edges = pd.DataFrame(Edges, columns = ["To","From"])
+TimeAuxList = pd.DataFrame(TimeAuxList,
+columns= ['TimeStamp'])
+Edges = pd.concat([Edges.reset_index(drop=True),
+TimeAuxList],axis=1)
+Edges.to_csv(str(filename)+ "_" 
++str(InnerIter)+".csv")
+InnerIter = InnerIter + 1
+print(InnerIter*50/len(dicts),
+"percentage of task done")
+if iter % 50 ==0:
+Listed = []
+Listed2 = []
+ListOfLists = []
+ListOfLists2 = []
+TimeStampList = []
+if iter % len(dicts) == 0:
+a = ListOfLists
+a2 = ListOfLists2
+Edges = []
+EdgesTax = []
+TimeAuxList = []
+for i in range(len(ListOfLists)):
+    if len(ListOfLists[i]) > 50:
+        ListOfLists[i] = ListOfLists[i][0:50]
+    h = itertools.combinations(ListOfLists[i], 2)
+    TimeAux = TimeStampList[i]
+    for comb in h:
+        Edges.append(comb)
+        TimeAuxList.append(TimeAux)
+for lists in a2:
+    if len(lists) > 50:
+        lists = lists[0:50]
+    h2 = itertools.combinations(lists,2)
+Edges = pd.DataFrame(Edges, 
+columns = ["To","From"])
+TimeAuxList = pd.DataFrame(TimeAuxList, 
+columns= ['TimeStamp'])
+Edges = pd.concat([Edges.reset_index(drop=True),
+TimeAuxList],axis=1)
+Edges.to_csv(str(filename)+ "_" 
++str(InnerIter)+".csv")
+Inneriter = InnerIter + 1
+print(InnerIter*50/len(dicts),
+"percentage of task done")
+print("Finished")
+
+def master_sampler():
+GZIPdirectory = 'E:/Data & Thesis/DataStreamZIPDUMP'
+gzips_location = get_file_type(GZIPdirectory,'.gz')
+list_of_stop_words = ["Edges", "Florentine", 
+"mappings.json.gz","TaxonomyMain.csv"]
+filtered_str = [x for x in gzips_location 
+if x not in set(list_of_stop_words)]
+i = 1
+weighted_edge_list = pd.DataFrame()
+weighted_edge_list.to_csv("WeightedEdgelist.csv")
+donefiles = []
+try:
+os.mkdir('Auxfiles') 
+except OSError as e:
+print("Ya esta el directorio")
+for file in filtered_str:
+fp = open("zen1.txt", "wb")
+with gzip.open(file,'rb') as f:
+data = f.read()
+fp.write(data)
+fp.close()
+dicts = Read_Cookies("zen1.txt")
+CreateHierarchyEdgelist_optim(dicts,"Auxfiles/aux")
+j = 0
+aux_files = get_file_type(
+"Auxfiles",'.csv')
+weighted_edge_list = pd.read_csv(
+"WeightedEdgelist.csv")
+weighted_edge_list = weighted_edge_list.loc[:,
+~weighted_edge_list.columns.str.
+contains('^Unnamed')]
+for auxs in aux_files:
+Thing = pd.read_csv(auxs)
+if len(Thing)>0:
+    max_batch = max(Thing['TimeStamp'])
+    min_batch = min(Thing['TimeStamp'])
+    Thing = Thing[['To','From']]
+    Thing['freq']=Thing.groupby(by=['To'])
+    [['To']].transform('count')
+    Thing = Thing[Thing['To'] != Thing['From']]
+    weighted_edge_list = pd.concat(
+    [Thing,weighted_edge_list]).groupby(
+    ["To","From"]).
+    sum().reset_index()
+    j = j +1
+    print(j/len(aux_files),"Appending done")
+try:
+shutil.rmtree('Auxfiles')
+except OSError as e:
+print ("Error: %s - %s." %
+(e.filename, e.strerror))
+try:
+os.mkdir('Auxfiles') 
+except OSError as e:
+print("Ya esta el directorio")
+pass
+print(i*100/len(filtered_str),
+"PERCENTAGE OF GZ FILES DONE")
+donefiles.append(file)
+i = i+1
+fp = open("gzips.txt", "wb")
+fp.write(donefiles)
+fp.close()
+return(donefiles)
+# %%
+def check_time_logs():
+with open('gzips.txt',"r",encoding="utf-8",
+errors="ignore") as in_file:
+dicts = []
+for line in in_file.readlines():
+    line = line.replace('\\','/')
+    line = line.replace('\n','')
+    dicts += [line]
+min_time = 1536486306
+max_time = 1536486306 
+#First observation of the cookies
+cookies = 0
+iter2 = 0
+total = 0
+for file in dicts:
+size = os.path.getsize(file)
+total = total + size
+for file in dicts:
+fp = open("zen1.txt", "wb")
+with gzip.open(file,'rb') as f:
+data = f.read()
+fp.write(data)
+fp.close()
+dictss = Read_Cookies("zen1.txt")
+for dicty in dictss:
+time = dicty['events'][0]['ts']
+if time < min_time:
+    min_time=time
+if time > max_time:
+    max_time = time
+print(min_time,max_time)
+iter2 = iter2 +1
+cookies = cookies + len(dictss)
+print(iter2/len(dicts))
+#max_time de la muestra es: 1537286399
+#min_time de la muestra es: 1536267600
+#numero de registros de cookies: 25435675
+return(max_time,min_time,total)
+
+\end{lstlisting}

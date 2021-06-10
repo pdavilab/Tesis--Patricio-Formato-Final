@@ -1,0 +1,171 @@
+\chapter{Modelos log-Lineales}
+\label{ch:ModelosLineales}
+
+\section{Modelos lineales}
+
+Dentro de la estadística los modelos lineales normalmente se refieren al modelo de regresión lineal. Designar a un modelo como lineal es para identificar un tipo de modelos que reducen de forma importante la complejidad de un problema.
+
+\begin{definition}[Regresión lineal]
+Primero asumimos varias cosas
+\begin{enumerate}
+    \item $E[\epsilon_i] = 0 \quad (i=1,\ldots,n)$
+    \item $var(\epsilon_i) = \sigma^2 \quad (i=1,\ldots,n)$
+    \item $cov(\epsilon_i,\epsilon_j) = 0$ para todo $i \neq j$
+\end{enumerate}
+
+El modelo de regresión lineal es el siguiente. Dada una muestra aleatoria de $Y_i,X_{i1},\ldots,X_{ip}$, con $i = 1,\ldots,n$ la relación entre las observaciones $Y_i$ y las variables independientes $X_{ij}$ es:
+\begin{equation}
+Y_i &= \beta_0 + \beta_1\phi_1(X_{i1}) + \ldots + \beta_p\phi_p(X_{ip}) + \epsilon_i \quad (i = 1,\ldots,n)
+\end{equation}
+
+las funciones $\phi_1,\ldots,\phi_p$ pueden ser de cualquier forma. El término $\epsilon_i$ es una variable aleatoria que corresponde a los errores asociados en la relación. Lo lineal se deriva a partir de los coeficientes de regresión $\beta_j$. Es decir que los valores predecidos $\hat{Y_i}$ son funciones lineales de $\beta_j$.
+
+La estimación de los coeficientes se hace a partir de minimizar el problema de mínimos cuadrados:
+\begin{equation}
+  \sum_{i=1}^{n}\left\{Y_{i}-\left(\beta_{0}+\sum_{j=1}^{p} \beta_{j} \phi_i(X_{i,j})\right)\right\}^{2}.
+\end{equation}
+
+\end{definition}
+
+\section{Familia Exponencial}
+\begin{definition}[Familia exponencial] \label{def:fam_exponencial}
+Definimos a la familia exponencial de distribuciones de probabilidad como las distribuciones de probabilidad cuya densidad tiene la siguiente forma:
+
+\begin{equation}
+    p(x | \eta)=h(x) \exp \left\{\eta^{T} T(x)-A(\eta)\right\}
+\end{equation}
+
+para un vector $\eta$, que se le conoce como el vector canónico, y las funciones conocidas $T$ y $h$. La estadística $T(x)$ se refiere a una estadística suficiente. La función $A(\eta)$ se le conoce como el factor de normalización. Si integramos respecto a $\eta$ tenemos:
+
+\begin{equation}
+    A(\eta)=\log \int h(x) \exp \left\{\eta^{T} T(x)\right\} \nu(d x)
+\end{equation}
+
+entonces $A(\eta)$ en realidad se puede ver como el logaritmo del factor de normalización. Únicamente está determinada a partir de que $\eta$, $T(x)$ y $h(x)$ están determinadas. Finalmente vale la pena notar que si remplazamos $\eta$ con $\Phi(\theta)$ podemos reescribir nuestra función como:
+
+\begin{equation}
+    p(x | \theta)=h(x) \exp \left\{\Phi(\theta)^{T} T(x)-A(\Phi(\theta))\right\}
+\end{equation}
+
+o de otra forma como función de densidad:
+
+\begin{equation}
+    f_{Y}(y | \theta, \phi)=\left\{\frac{y \theta-b(\theta)}{a(\phi)}+c(y, \phi)\right\}
+\end{equation}
+
+donde $a(\phi), b(\theta)$ y $c(y,\phi)$ están determinadas. $\theta$ ahora es nuestro parámetro canónico y $\phi$ es nuestro parámetro de dispersión, asociado con la variabilidad de la distribución.
+
+\end{definition}
+
+\begin{definition}[Suficiencia]
+La suficiencia caracteriza lo que es esencial en una muestra aleatoria. Una estadística es cualquier función sobre el espacio muestral que no es una función del parámetro. En particular si decimos que X es una variable aleatoria y que $T(X)$ es una estadística se dice que es suficiente para $\theta$ si no existe información en $X$ respecto a $\theta$ mas allá de la que podemos observar en $T(X)$. Es decir que una vez observado $T(X)$ podemos olvidarnos de X para cualquier tipo de inferencia respecto al parámetro $\theta$. 
+
+De forma más formal decimos que una estadística es suficiente para $\theta$ si $\theta$ es independiente a $X|T(X)$ que es lo mismo en términos de funciones de probabilidad que:
+
+\begin{equation}
+    f_\theta(x) = f_\theta(x,T(x)) = f(x|T(x))f_\theta(T(x))
+\end{equation}
+
+
+\end{definition}
+
+
+\section{Modelo de regresión logística}
+
+El propósito fundamental de la regresión logística es incorporar respuestas binarias a un modelo de regresión. Sin embargo su forma es análoga a la regresión lineal múltiple lo que significa que podemos usarlos para estimar una respuesta dicotómica cuya varianza se deriva de distintos factores.
+
+Si queremos conocer el resultado de una clasificación o decisión cualquiera entonces podemos suponer que $Y \thicksim Bi(n,p)$, donde conocemos $n$ en $ \field{N}$ pero no $p$ en $[0,1]$.
+
+Podemos utilizar la función \textit{logit} que manda la probabilidad de pertenecer a una clase, digamos del conjunto \{0,1\}. La probabilidad de esto se ve esencialmente como
+
+\begin{equation}
+    \mathcal{P}(Y=1|X_1,\ldots,X_p) = 1- \mathcal{P}(Y=0|X_1,\ldots,X_p),
+\end{equation}
+
+ahora podemos por empezar por construir el modelo  
+
+\begin{equation}
+    \mathcal{P}(Y=1|X_1,\ldots,X_p) \to \mathcal{P}(Y=1|X_1,\ldots,X_p,\beta)
+\end{equation}
+
+donde
+
+\begin{equation}
+    \mathcal{P}(Y=1|X_1,\ldots,X_p,\beta) 
+    &= G(\beta_1X_1,\ldots,\beta_pX_p,\beta_{p+1})
+\end{equation}
+y tomamos a G como la función de distribución logística
+\begin{equation*}
+   G(X) = \frac{e^x}{1+e^x}.
+\end{equation*}
+
+Considerando que,
+
+\begin{equation*}
+    p = \frac{\mathcal{P}(Y=1)}{1+\mathcal{P}(Y=1)}
+\end{equation*}
+
+
+
+
+entonces aplicando esta respuesta logística a la pregunta de nuestra probabilidad inicial tenemos entonces que:
+
+\begin{equation}
+    p=\frac{1}{1+e^{-\left(\beta_{0}+\beta_{1} x_{1}+\beta_{2} x_{2}+\cdots+\beta_{q} x_{q}\right)}}
+\end{equation}
+
+A esto se le conoce como el momio del cociente de probabilidades.
+\begin{equation*}
+    momio(Y=1) = \frac{p}{1-p}
+\end{equation*}
+
+combinando con la respuesta logística anterior obtenemos que
+
+\begin{equation*}
+    \mathcal{P}(Y=1) = 1+e^{-\left(\beta_{0}+\beta_{1} x_{1}+\beta_{2} x_{2}+\cdots+\beta_{q} x_{q}\right)}
+\end{equation*}
+
+y fundamentalmente que:
+
+\begin{align*}
+    &=\frac{\mathcal{P}(Y=1| X_1,\ldots,X_k)}{1-\mathcal{P}(Y=1| X_1,\ldots,X_k)} \\
+    &= \frac{\mathcal{P}(Y=1| X_1,\ldots,X_k,\beta)}{1- \mathcal{P}(Y=1| X_1,\ldots,X_k,\beta)} \\
+    &=e^{\beta_0+\beta_1x_1+ \ldots +\beta_kx_k}
+\end{align*}
+De donde recordamos que cada uno de estos $\beta_k$ corresponden al coeficiente asociado a la variable explicativa $x_k$.
+    
+Cuando se hace referencia al incremento unitario en una de las variables explicativas del modelo, utilizamos el cociente de momios asociados (\cite{RegresionLogistica}) (El que se tiene antes del incremento y el de después del incremento).
+
+Además, recordando que $E[Y] = np$. Esto es por la linealidad de la esperanza y el hecho que la realización de una distribución binomial es un suceso de n pruebas con una distribución Bernoulli. Entonces notamos,
+
+\begin{equation*}
+    E[Y]    &= np \\
+	        &= n \frac{ e^\theta }{ 1 + e^\theta}
+\end{equation*}
+
+donde la función \textit{sigmoide} esta definida como:
+\begin{equation*}
+	        \frac{ e^\theta }{ 1 + e^\theta}.
+\end{equation*}
+
+Entonces si consideramos a $\theta$ como una función lineal en un modelo de regresión entonces la ecuación logística se convierte en la ecuación 3.11. Notamos entonces que tenemos que el logaritmo de la razon del momio:
+
+\begin{align*}
+	p(Y = y) &= \binom{n}{y} p^y (1-p)^{n-y} \\
+    	     &\log(p(Y = y))= e^{ \left\{ y \log \left( \frac{p}{1-p} \right) + n \log (1-p) + \log Bi{n}{y} \right\}.
+\end{align*}
+Así pues, la distribución binomial pertenece a la familia exponencial de distribuciones (\ref{def:fam_exponencial}), con $\theta = \log \left( \frac{p}{1-p} \right), \phi = 1$ y
+\begin{equation*}
+	a(\phi) = 1, \quad b(\theta) = n \log \left( 1 + e^{\theta} \right), \quad c(y, \phi) = \log \binom{n}{y}.
+\end{equation*}
+
+
+
+\begin{equation}
+	\log \left( \frac{p}{1-p} \right) = \beta_0 + \beta_1 x_1 + \cdots + \beta_q x_q.
+\end{equation}
+
+Ahora bien, en este capitulo vimos una breve explicación sobre como los modelos lineales están relacionados al modelo regresión logística y introdujimos la familia exponencial de distribuciones de probabilidad. Los modelos log-lineales serán una parte esencial para utilizar los modelos de grafos aleatorios exponenciales.
+
+En el siguiente capitulo introduciremos los conceptos de los grafos aleatorios de Markov, el teorema de Hammersley-Clifford y los modelos p*. Estos son una clase de modelos parametricos log-lineales para grafos con dependencias de Markov que solo dependen del conjunto completo de triadas y k-estrellas.
+

@@ -1,0 +1,23 @@
+\begin{tikzpicture}[scale=1.2]
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=node] (0) at (-1, 0) {A};
+		\node [style=node] (1) at (0, 1) {B};
+		\node [style=node] (2) at (0, 0) {C};
+		\node [style=node] (3) at (0, -1) {D};
+		\node [style=node] (4) at (1, 0) {E};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=dir-edge] (0) to (1);
+		\draw [style=dir-edge] (0) to (2);
+		\draw [style=dir-edge] (0) to (3);
+		\draw [style=dir-edge] (1) to (4);
+		\draw [style=dir-edge] (2) to (0);
+		\draw [style=dir-edge] (2) to (1);
+		\draw [style=dir-edge] (2) to (3);
+        \draw [style=dir-edge] (2) to (4);
+        \draw [style=dir-edge] (3) to (0);
+        \draw [style=dir-edge] (4) to (2);
+        \draw [style=dir-edge] (4) to (3);
+        
+	\end{pgfonlayer}
+\end{tikzpicture}

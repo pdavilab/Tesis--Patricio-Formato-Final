@@ -1,0 +1,17 @@
+\begin{tikzpicture}[scale=1.05]
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=node] (0) at (-1, 1) {A};
+		\node [style=node] (1) at (1, 1) {B};
+		\node [style=node] (2) at (2, .5) {C};
+		\node [style=node] (3) at (0, 0) {D};
+		\node [style=node] (4) at (-1.5, -2) {E};
+        \node [style=node] (5) at (.5, -1) {F};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=undir-edge] (0) to (3);
+		\draw [style=undir-edge] (1) to (3);
+		\draw [style=undir-edge] (2) to (3);
+		\draw [style=undir-edge] (3) to (4);
+		\draw [style=undir-edge] (4) to (5);   
+	\end{pgfonlayer}
+\end{tikzpicture}

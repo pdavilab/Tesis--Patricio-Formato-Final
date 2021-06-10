@@ -1,0 +1,76 @@
+\begin{tikzpicture}[scale=.72]
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=node] (0) at (4.5, 4) {};
+        \node [style=node] (1) at (2.5, 3) {};
+        \node [style=node] (2) at (6.5, 3) {};
+        \node [style=node] (3) at (1.5, 2) {};
+        \node [style=node] (4) at (3.5, 2) {};
+        \node [style=node] (5) at (3, 1) {};
+        \node [style=node] (6) at (4, 1) {};
+        \node [style=simple-label] (a) at (4.5, 0) {(a) Árbol estrictamente binario};
+        
+        \node [style=node] (7) at (8.5, -1) {};
+        \node [style=node] (8) at (6.5, -2) {};
+        \node [style=node] (9) at (10.5, -2) {};
+        \node [style=node] (10) at (5.5, -3) {};
+        \node [style=node] (11) at (7.5, -3) {};
+        \node [style=node] (12) at (9.5, -3) {};
+        \node [style=node] (13) at (11.5, -3) {};
+        \node [style=node] (14) at (5, -4) {};
+        \node [style=node] (15) at (6, -4) {};
+        \node [style=node] (16) at (7, -4) {};
+        \node [style=simple-label] (c) at (8.5, -5) {(c) Árbol binario casi completo};
+        
+        \node [style=node] (22) at (12, 4) {};
+        \node [style=node] (23) at (10, 3) {};
+        \node [style=node] (24) at (14, 3) {};
+        \node [style=node] (25) at (9, 2) {};
+        \node [style=node] (26) at (11, 2) {};
+        \node [style=node] (27) at (13, 2) {};
+        \node [style=node] (28) at (15, 2) {};
+        \node [style=node] (29) at (8.5, 1) {};
+        \node [style=node] (30) at (9.5, 1) {};
+        \node [style=node] (31) at (10.5, 1) {};
+        \node [style=node] (32) at (11.5, 1) {};
+        \node [style=node] (33) at (12.5, 1) {};
+        \node [style=node] (34) at (13.5, 1) {};
+        \node [style=node] (35) at (14.5, 1) {};
+        \node [style=node] (36) at (15.5, 1) {};
+        \node [style=simple-label] (b) at (12, 0) {(b) Árbol binario completo};
+        
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=undir-edge] (0) to (1);
+        \draw [style=undir-edge] (0) to (2);
+        \draw [style=undir-edge] (1) to (3);
+        \draw [style=undir-edge] (1) to (4);
+        \draw [style=undir-edge] (4) to (5);
+        \draw [style=undir-edge] (4) to (6);
+        
+        \draw [style=undir-edge] (7) to (8);
+        \draw [style=undir-edge] (7) to (9);
+        \draw [style=undir-edge] (8) to (10);
+        \draw [style=undir-edge] (8) to (11);
+        \draw [style=undir-edge] (9) to (12);
+        \draw [style=undir-edge] (9) to (13);
+        \draw [style=undir-edge] (10) to (14);
+        \draw [style=undir-edge] (10) to (15);
+        \draw [style=undir-edge] (11) to (16);
+        
+        \draw [style=undir-edge] (22) to (23);
+        \draw [style=undir-edge] (22) to (24);
+        \draw [style=undir-edge] (23) to (25);
+        \draw [style=undir-edge] (23) to (26);
+        \draw [style=undir-edge] (24) to (27);
+        \draw [style=undir-edge] (24) to (28);
+        \draw [style=undir-edge] (25) to (29);
+        \draw [style=undir-edge] (25) to (30);
+        \draw [style=undir-edge] (26) to (31);
+        \draw [style=undir-edge] (26) to (32);
+        \draw [style=undir-edge] (27) to (33);
+        \draw [style=undir-edge] (27) to (34);
+        \draw [style=undir-edge] (28) to (35);
+        \draw [style=undir-edge] (28) to (36);
+                       
+	\end{pgfonlayer}
+\end{tikzpicture}

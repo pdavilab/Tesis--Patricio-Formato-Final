@@ -1,0 +1,23 @@
+\begin{tikzpicture}[scale=1.4]
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=split-node] (0) at (4.5, 3) {\rotatebox{-90}{E}\nodepart{lower}\rotatebox{-90}{8}};
+		\node [style=split-node] (1) at (2.5, 2) {\rotatebox{-90}{B}\nodepart{lower}\rotatebox{-90}{7}};
+		\node [style=split-node] (2) at (6.5, 2) {\rotatebox{-90}{H}\nodepart{lower}\rotatebox{-90}{6}};
+        \node [style=split-node] (3) at (1.5, 1) {\rotatebox{-90}{A}\nodepart{lower}\rotatebox{-90}{1}};
+        \node [style=split-node] (4) at (3.5, 1) {\rotatebox{-90}{D}\nodepart{lower}\rotatebox{-90}{5}};
+        \node [style=split-node] (5) at (5.5, 1) {\rotatebox{-90}{G}\nodepart{lower}\rotatebox{-90}{4}};
+        \node [style=split-node] (6) at (3, 0) {\rotatebox{-90}{C}\nodepart{lower}\rotatebox{-90}{2}};
+        \node [style=split-node] (7) at (5, 0) {\rotatebox{-90}{F}\nodepart{lower}\rotatebox{-90}{3}};
+        
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=undir-edge] (0) to (1);
+		\draw [style=undir-edge] (0) to (2);
+		\draw [style=undir-edge] (1) to (3);
+		\draw [style=undir-edge] (1) to (4);
+		\draw [style=undir-edge] (2) to (5);   
+        \draw [style=undir-edge] (4) to (6);
+        \draw [style=undir-edge] (5) to (7);
+
+	\end{pgfonlayer}
+\end{tikzpicture}

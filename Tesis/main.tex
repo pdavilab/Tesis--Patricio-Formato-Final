@@ -1,0 +1,167 @@
+% Tesis ITAM CLASS -- version 0.1 (13 - Abr - 2015)
+% Clase para las tesis del ITAM
+%% LICENSE: Creative Commons SA-BY 3.0
+%
+%
+% Este documento presenta un ejemplo de uso de la plantilla
+% El estudiante es libre de modificar este archivo a su gusto
+% 
+\documentclass[12pt]{tesisITAM}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\renewcommand\qedsymbol{$\qed$}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\usepackage{tikz}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{setspace}
+% \usepackage{biblatex}
+\usepackage{wrapfig}
+\usepackage{changepage}
+\usepackage{graphicx}
+% \addbibresource{references.bib}
+\usepackage{natbib}
+\usepackage[toc,page]{appendix}
+\input{Figures/tikz/preamble.tikz}
+
+%\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+%\usepackage[]{algorithm2e}
+%\usepackage[dotocloa,boxed,algochapter]{algorithm2e} 
+\usepackage[algochapter,linesnumbered,noend,ruled,oldcommands]{algorithm2e}
+\newcommand*{\field}[1]{\mathbb{#1}}%
+ \usepackage{algcompatible}
+
+\makeatletter
+\renewcommand{\@chapapp}{}% Not necessary...
+\newenvironment{chapquote}[2][2em]
+  {\setlength{\@tempdima}{#1}%
+   \def\chapquote@author{#2}%
+   \parshape 1 \@tempdima \dimexpr\textwidth-2\@tempdima\relax%
+   \itshape}
+  {\par\normalfont\hfill--\ \chapquote@author\hspace*{\@tempdima}\par\bigskip}
+\makeatother
+
+
+\title{Análisis de la estructura de redes sociales con modelos de redes aleatorias exponenciales}
+\author{Patricio Dávila Barberena}
+\degree{Licenciado en Matemáticas Aplicadas}
+\advisor{Dr. Juan José Fernández Durán}
+\year{2019}
+
+\newtheorem{definition}{Definición}[chapter]
+\newtheorem{theorem}{Teorema}[chapter]
+\newtheorem{corollary}{Corolario}[chapter]
+\newtheorem{example}{Ejemplo}[chapter]
+
+\begin{document}
+
+	\pagenumbering{gobble}
+	\maketitle
+	\publicationrights
+    
+    \cleardoublepage
+    \include{Chapters/agradecimientos}
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	% ABSTRACT
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	\begin{abstract}{spanish}
+	En este trabajo se profundiza sobre los modelos de grafos aleatorios exponenciales. Se utiliza este enfoque para la predicción de la estructura de los grafos en el siguiente momento del tiempo y se interpretan los resultados de la estimación de los parámetros que están asociados a esta estructura. Además, se hace el análisis de varias redes sociales con el fin de describirlas y de detectar las comunidades subyacentes en está al igual que predecir su siguiente estado.
+	\end{abstract}
+  
+%	\begin{abstract}{english}
+%		In this work we present a template for thesis and titulation works presented at ITAM. It is provided freely and without any responsability under the \emph{creative commons BY-SA 3.0}. 
+%	\end{abstract}
+
+    \cleardoublepage
+    \selectlanguage{spanish}
+	\setcounter{page}{1}
+	\pagenumbering{roman}
+
+	\tableofcontents
+    
+	\cleardoublepage
+    \phantomsection
+    \addcontentsline{toc}{chapter}{\listfigurename}
+	\listoffigures
+	\newpage
+    
+    %\listoftodos
+    %\todo{eliminar lista de TODO}
+
+	\cleardoublepage
+	\pagenumbering{arabic}
+	\setcounter{page}{1}
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	% CONTENT
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    \include{Chapters/introduccion}
+    
+    \cleardoublepage
+    \include{Chapters/preliminares}
+    \include{Chapters/ModelosLineales}
+    
+    %\cleardoublepage
+    %\include{Chapters/treap}
+    \include{Tesis/Chapters/ERGMS}
+    \cleardoublepage
+    \include{Tesis/Chapters/CasosEmp}
+    
+    \cleardoublepage
+    \include{Chapters/conclusiones}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	% APPENDIX
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%\appendix
+	 \include{Chapters/appendixA}
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	% BIBLIOGRAPHY
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\clearpage
+	\addcontentsline{toc}{chapter}{Bibliografía} %Añadimos la bibliografia a la lista de contenidos.
+	
+	%%%%%%%%% Referencias usando el sistema embebido %%%%%%%%%%%
+	% e.g. (Ejemplo tomado de https://en.wikibooks.org/wiki/LaTeX/Bibliography_Management)
+	%
+	% \begin{thebibliography}{9}
+	%
+	%	\bibitem{lamport94}
+    %			Leslie Lamport,
+    %			\emph{LaTeX: a document preparation system},
+    %			Addison Wesley, Massachusetts,
+  	%			2nd edition,
+    % 			1994.
+    %
+	% \end{thebibliography}
+
+	%%%%%%%%% Referencias usando bibtex %%%%%%%%%%%
+    %--------------------------------------------------------------------------------
+%   BIBLIOGRAFÍA
+%--------------------------------------------------------------------------------
+
+\backmatter
+\nocite{*}
+% \bibliographystyle{apacite}
+\bibliographystyle{agsm}
+% \bibliography{EVRWedit}
+\bibliography{references}
+%\bibliographystyle{apacite} % Así se usa y cols. en lugar de et al.
+%bibliographystyle{plainnat}
+%\bibliography{references.bib}
+% \printbibliography
+    %\renewcommand{\bibname}{References}
+	%\bibliographystyle{unsrt}
+	%\bibliography{references} 
+
+
+
+\end{document}

@@ -1,0 +1,200 @@
+\chapter{Grafos}
+\label{ch:preliminaries}
+
+\section{Tipos de Grafos}
+
+En general existen los grafos dirigidos y no dirigidos.\footnote{Para efectos de esta tesis todos los grafos son grafos no dirigidos.}
+
+
+\begin{definition}[Grafo no dirigido]
+\label{grafo_def}
+Un \textbf{grafo no dirigido} es una pareja ordenada $ G = (\mathcal{N}, \mathcal{E})$, en donde $\mathcal{N}$ es un conjunto finito no vacío cuyos elementos son vértices y $\mathcal{E}$ es un conjunto de subconjuntos no ordenados de cardinalidad $2$ de elementos de $\mathcal{N}$.  Estos son llamados \textbf{aristas}. 
+
+\end{definition}
+
+En la literatura estadística G está definido en términos de nodos y las correspondientes medidas en pares de nodos $G \equiv G ( \mathcal { N } , \mathcal { Y } )$ donde $\mathcal{Y}$ es una matriz cuadrada de tamaño $N \times N$. Esta matriz $\mathcal{Y}$ puede ser representada como una matriz de adyacencia con elementos binarios donde solo nos interesa la conexión entre nodos. Para las grafos no dirigidas la matriz $\mathcal{Y}$ es simétrica. 
+
+Además vale la pena notar que la suma de todos los elementos de la matriz de adyacencia es 2 veces la cardinalidad del conjunto de aristas. $\sum _I \mathcal{Y}_{I} = 2E$. Los nodos del grafo podrían representar individuos, organizaciones o cualquier tipo de entidad que tenga características. Las aristas podrían representar conexiones, interacciones o relaciones que comparten las entidades.
+
+\textbf{¿Cómo representar una red social?}
+
+Los nodos pueden ser referidos como vértices, individuos o agentes. Estos nodos deben de ser agentes con características que comparten entre sí para poder representar sus conexiones relevantes a través de aristas.
+
+
+\begin{definition}[Matriz de adyacencia]
+Una \textbf{matriz de adyacencia} es una matriz cuadrada utilizada para representar un grafo finito. Los elementos $ij$ de la matriz indican si los pares de vértices $i$ y $j$ son adyacentes o no en el grafo.
+
+\end{definition}
+
+Visualmente podemos representar un grafo $G \equiv G ( \mathcal { N } , \mathcal { E } )$ poniendo en el plano un círculo para cada elemento de $\mathcal{N}$ con su respectiva etiqueta. A estos círculos se les llama comúnmente vértices o nodos del grafo. Para representar al conjunto de aristas del grafo unimos con un segmento de recta dos círculos si la pareja formada por sus respectivos elementos de $\mathcal{N}$ está en $\mathcal{E}$. La figura ~\ref{fig:undir-graph} muestra un ejemplo de un grafo.
+
+\begin{figure}
+\centering
+\input{Figures/tikz/undirected-graph.tikz}
+\caption[Ejemplo de un grafo]{Un grafo}
+\label{fig:undir-graph}
+\end{figure}
+
+Para una relación valorada los elementos $ij$ de la matriz de adyacencia se pueden considerar como $c \in {0, 1, 2,\dots, C-1}$ es decir que en el caso dicotómico $C = 2$.
+
+
+\section{Grafos Aleatorias}
+
+Formalmente, cuando tenemos un grafo G y decimos que es un gráfico aleatorio, estamos siendo poco precisos pues un grafo dado no tiene nada al azar. Sin embargo, lo que queremos decir con este abuso de notación es que el grafo fue muestreado de un conjunto de gráficas de acuerdo con una distribución de probabilidad. Por ejemplo, podríamos tener tres grafos posibles en el conjunto de vértices $[3] = \{1, 2, 3\}$ con 2 aristas con distribución de probabilidad uniforme, y por lo tanto, cada grafo tendría la misma probabilidad  de $1/3$ para ser muestreado. 
+
+Existen casos clásicos de grafos aleatorios, haremos una introducción a dos de estas familias de grafos aleatorios.
+
+
+\begin{example}{Grafos Binomiales Aleatorios}
+
+En este modelo se tiene dos parámetros, el número de vértices n y un parámetro de probabilidad $0 \leq p \leq 1$. Sea $\mathcal{G}$ la familia de todos los gráficos posibles en el conjunto de vértices G = [n]. Notamos que $|\mathcal{G}| = 2 ^{n \choose 2}$. Entonces el modelo $G(n, p)$ asigna a un gráfico $\hat{G} \in G$ la siguiente probabilidad
+
+$$\operatorname { Pr } [ G ] = p ^ { | E ( G ) | } ( 1 - p ) ^ {{ \left( \begin{array} { l } { n } \\ { 2 } \end{array} \right) - | E ( G ) |} }$$
+
+\end{example}
+
+\begin{example}{Grafos aleatorios uniformes}
+
+Este modelo igual tiene dos parámetros, el número de vértices, $N$, y número de aristas, $m$, donde $0 \leq m \leq {N \choose 2}$
+Este modelo se asigna a todos los grafos etiquetados en el conjunto de vértices $[n]$ con exactamente $m$ aristas la misma probabilidad. En otras palabras,
+
+$$\operatorname { Pr } ( G ) = \left\{ \begin{array} { l l } { \frac { 1 } {  {{N \choose 2 } \choose m } } & { \text { sí } | E ( G ) | = m } \\ { 0 } & { \text { sí } | E ( G ) | \neq m } \end{array} \right.$$
+
+Observe que en el modelo uniforme esencialmente lanzamos una moneda independientemente para cada arista, y con probabilidad $p$ la agregamos al grafo. De hecho se pueden hacer estos grafos seleccionando aleatoriamente cada vértice y asignando aristas hasta que se nos acaben nuestras $m$ aristas. 
+
+\end{example}
+
+
+\begin{example}{El modelo Erd\"{o}s–Rényi-Gilbert de grafos aleatorias}
+
+El modelo de grafos aleatorias de Erd\"{o}s–Rényi-Gilbert describe un grafo no dirigido que contiene N nodos y una cantidad fija de aristas, $E$, elegidas aleatoriamente de $N \choose 2$ posibles aristas en el grafo. Es decir que cada uno de todos los $ {   {{N \choose 2 } \choose E $ grafos son igual de probables. El modelo tiene una distribución binomial donde la probabilidad de $E$ aristas es 
+
+$$\ell ( G ( N , p ) \text { tiene } E \text { aristas } | p ) = p ^ { E } ( 1 - p ) ^ { \left( \frac { N } { 2 } \right) - E }.$$
+
+De forma equivalente se puede ver en términos de la matriz de adyacencia binaria  $\mathcal{Y}$ de $N$ \times $N$
+
+$$\ell ( Y | p ) = \prod _ { i \neq j } p ^ { Y _ { i j } } ( 1 - p ) ^ { 1 - Y _ { i j } }.$$
+
+
+También se puede definir este caso particular como un proceso estocástico en donde se elige una arista del conjunto $E$ sin reemplazo a cada momento en el tiempo hasta el momento $m$. Esto da lugar a una distribución hipergeométrica que induce una distribución uniforme sobre el espacio muestral de posibles grafos.
+
+\end{example}
+
+
+
+\section{Grafos Estáticos y Dinámicos}
+
+Vale la pena hacer la distinción entre las grafos estáticas y las grafos dinámicas ya que más adelante en esta tesis se hará uso liberal del lenguaje aquí explicado. Esencialmente una red estática es aquella que modela un solo momento en el tiempo de la red, es decir que es un modelo estático por que sus elementos están fijos a través del tiempo. Una red estática sin embargo podría ser sometida a un proceso para las adiciones de aristas y la modificación de éstas, el cual es un proceso dinámico que podría generar el grafo observado, sin embargo en la red estática no existe un intento para incorporar esta información dentro del grafo observado. En estos casos se les llama a los grafos pseudo dinámicos. 
+
+De hecho podemos tomar al modelo de \textit{Erd\"{o}s–Rényi-Gilbert} $ G = (\mathcal{N}, \mathcal{E})$ como un proceso dinámico que se utilizó para generar un grafo aleatorio. Recordemos que $|\mathcal{N}| = N$ y $|\mathcal { E }| = E$.
+
+Se empieza con el grafo totalmente desconectado de $N$ nodos al tiempo $0$. A partir de este momento para cada momento en el tiempo se agrega una arista al grafo con la probabilidad $p = \frac{E}{ {N \choose 2}}$.
+
+Por convención se fijan el número de nodos en $N$ aunque en realidad se puede extender el proceso para agregar nodos. Este planteamiento del modelo asume que se pueden agregar aristas (y nodos) pero no se pueden quitar. La distribución de las aristas entonces es binomial.
+
+
+
+
+
+%%Estadisticas Desrcitp
+
+
+\section{Procesos de Markov}
+
+\begin{definition}
+Un proceso estocástico es una colección de variables aleatorias $ \left\{ X _ { t } : t \in T \right\}}$ parametrizada por un conjunto $T$, llamado espacio parametral, en donde las variables toman valores en un conjunto $S$ llamado espacio de estados.
+\end{definition}
+
+Los procesos de Markov son un tipo de proceso aleatorio. Principalmente tienen la característica que no tienen memoria, es decir que únicamente el estado actual del proceso influye a donde va ir después. Los procesos que satisfacen esta condición se les conoce como procesos de Markov.
+
+Los procesos de Markov que tienen una cantidad finita de estados en los cuales pueden estar se llaman cadenas de Markov. Las cadenas de Markov pueden ser descritas en tiempo discreto $n \in \mathbb{Z}^+ = {0,1,2,3,\dots}$ o  en tiempo continuo $t \in \mathbb{R}^+ = [0, \infty]$ y cumplen con la siguiente propiedad.
+\begin{equation}
+    \begin{align}
+        \mathcal{P} \left( X _ { n + 1 } = x _ { n + 1 } | X _ { 0 } = x _ { 0 } , \ldots , X _ { n } = x _ { n } \right) \\
+        =\mathcal{P} \left( X _ { n + 1 } = x _ { n + 1 } | X _ { n } = x _ { n } \right)
+    \end{align}
+\end{equation}
+
+
+\subsection{Cadenas de Markov Continuas}
+
+Empezamos definiendo $\{Y(t)| t \in \mathcal{T}\}$ un proceso estocástico en donde $Y(t)$ tiene un espacio de resultados finito $\mathcal{Y}$ y $\mathcal{T}$ es un intervalo de tiempo continuo. Suponemos que la condición de Markov es cierta así que para cualquier resultado $\hat{y} \in \mathcal{Y}$ y para cualquier par de puntos $\{t_a < t_b | t_a,t_b \in \mathcal{T}\}$ tenemos que,
+
+\begin{equation}
+\begin{align}
+    \operatorname { Pr } \left\{ Y \left( t _ { b } \right) = \tilde { y } | Y ( t ) = y ( t ) , t : t \leq t _ { a } \right\}   \\
+    = \operatorname { Pr } \left\{ Y \left( t _ { b } \right) = \tilde { y } | Y \left( t _ { a } \right) = y \left( t _ { a } \right) \right\}
+\end{align}
+\end{equation}
+
+Esto quiere decir que si el tiempo $t_b$ denota el futuro y el tiempo $t_a$ denota el presente, entonces condicionando sobre el pasado es equivalente a condicionar sobre el presente cuando se quiere determinar el futuro. Si la probabilidad anterior únicamente depende de $t_b - t_a$, entonces uno puede fácilmente demostrar que $Y(t)$ tiene una probabilidad estacionaria y la matriz de transición
+
+\begin{equation}
+    \begin{align}
+        \operatorname { Pr } \left( t _ { b } - t _ { a } \right) : = \left[ \operatorname { Pr } \left\{ Y \left( t _ { b } \right) = \tilde { y } | Y \left( t _ { a } \right) = y \right\} \right] _ { y , \bar { y } \in \mathcal { Y } }
+    \end{align}
+\end{equation}
+
+
+y este puede ser escrito como una matriz exponencial
+
+\begin{equation}
+    \begin{align}
+        \operatorname { Pr } ( t ) = e ^ { t Q }
+    \end{align}
+\end{equation}
+
+donde $Q$ es conocida como la matriz de intensidad con elementos $q(y, \hat{y})$. Los elementos $q(y, \hat{y})$ donde según \cite{SurveyStats} estos pueden ser pensados como la tasa de cambio de la probabilidad de cambiar estados como una función del tiempo. Es decir \\
+$$\begin{array} { l } { \operatorname { Pr } \{ Y ( t + \epsilon ) = \tilde { y } | Y ( t ) = y \} \approx \epsilon q ( y , \tilde { y } ) }\end{array}.$$
+
+Cuando modelamos un grafo aleatorio el espacio de resultados $\mathcal{Y}$ se toma como todas las posibles configuraciones de aristas de un grafo con N nodos. Los elementos de la diagonal de $q ( y , \tilde { y } )$ son negativos para que la suma de los renglones sea igual a 0. Cualquier configuración individual $y \in \mathcal{Y}$ se puede representar como un vector de tamaño $N \choose 2$. Es decir que podemos utilizar $q_{ij}(y)$ para denotar la propensidad de la arista entre el nodo i y el nodo j para cambiar de valor opuesto bajo la configuración $y$(\cite{SurveyStats}).
+
+
+\textbf{Dinámicas orientadas a aristas}
+
+
+\cite{Snidjers2002} describe las dinámicas orientadas a las aristas como un optimización estocástica de una función potencial $f(y)$ sobre la configuración del grafo. En el caso de las aristas $f$ está basado sobre las estadísticas globales de la red. La función potencial $f(y)$ se define en términos de una combinación lineal de las estadísticas del grafo:
+
+$$f ( \mathbf { y } ) = \sum _ { k } \beta _ { k } s _ { k } ( \mathbf { y } ).$$
+
+Esta forma se volverá sumamente familiar ya que el proceso continuo de cadenas de Markov en realidad es equivalente al muestreo de Gibbs para las grafos aleatorias exponenciales (donde la siguiente arista a actualizar es seleccionada aleatoriamente). Estadísticas globales típicas para estas dinámicas pueden ser la siguientes.
+
+\begin{equation}
+    \begin{align}
+        \begin{array} { l l } { \text { Número de aristas dirigidas: } } & { s _ { 1 } ( \mathbf { y } ) = \sum _ { i j } y _ { i j } } \\ { \text { Número de aristas recíprocas: } } & { s _ { 2 } ( \mathbf { y } ) = \sum _ { i j } y _ { i j } y _ { j i } } \\ { \text { Número aristas que apuntan al mismo nodo: } } & { s _ { 3 } ( \mathbf { y } ) = \sum _ { i j k } y _ { k j } y _ { i j } } \\ { \text { Número de aristas que tienen el mismo origen: } } &  { s _ { 4 } ( \mathbf { y } ) = \sum _ { i j k } y _ { i k } y _ { i j } } \\ { \text { Número de caminos de tamaño dos: } } & { s _ { 5 } ( \mathbf { y } ) = \sum _ { i j k }  y _ { i j } y _ { j k } } \\ { \text { Número de tripletas transitivas: } } & { s _ { 6 } ( \mathbf { y } ) = \sum _ { i j k }  y _ { i j } y _ { i k } y _ { j k } } \end{array}.
+    \end{align}
+\end{equation}
+
+
+
+Estas estadísticas asumen que estamos en un grafo dirigido sin embargo no es difícil ver que es muy fácil crear las estadísticas para los grafos no dirigidos. Por ejemplo para el caso no dirigido podemos combinar las estadísticas $s_1$ y $s_2$ en una estadística ${ s ^ { ' } ( \mathbf { y } ) = \sum _ { i , j > i \in \mathcal{N} } y _ { i j } }$.
+
+\textbf{Dinámicas orientadas a aristas para grafos dinámicos}
+
+En este caso vamos a analizar modelos que tienen la propiedad de Markov de tal forma que podemos representar a una secuencia de grafos observados de tal forma que si $\{Y^1,Y^2,\dots,Y^T\}$ es un secuencia de un grafo en el tiempo entonces tenemos que,
+
+$$\begin{array} { c } { \operatorname { Pr } \left( Y ^ { 1 } , Y ^ { 2 } , \ldots , Y ^ { T } \right) = \operatorname { Pr } \left( Y ^ { T } | Y ^ { T - 1 } \right) \operatorname { Pr } \left( Y ^ { T - 1 } | Y ^ { T - 2 } \right) \cdots \operatorname { Pr } \left( Y ^ { 2 } | Y ^ { 1 } \right) } \right. } \right } \right \end{array}.$$
+
+Ahora la función potencial de este tipo de problema en realidad se ve de la forma \cite{SurveyStats}
+
+$$\operatorname { Pr } \left( \mathbf { y } ^ { t } | \mathbf { y } ^ { t - 1 } \right) = \frac { 1 } { Z } \exp \left\{ \sum _ { k } \beta _ { k } s _ { k } \left( \mathbf { y } ^ { t } , \mathbf { y } ^ { t - 1 } \right) \right\}$$
+
+de tal forma que el modelo involucra a dos grafos consecutivos que observamos. Con estos modelos podemos crear estadísticos descriptivos como los siguientes,
+
+$$\begin{array} { l l } { \text { Densidad: } } & { s _ { 1 } \left( \mathbf { y } ^ { t } , \mathbf { y } ^ { t - 1 } \right) = \frac { 1 } { ( n - 1 ) } \sum _ { i j } y _ { i j } ^ { t } } \\ { \text { Estabilidad: } } & { s _ { 2 } \left( \mathbf { y } ^ { t } , \mathbf { y } ^ { t - 1 } \right) = \frac { 1 } { ( n - 1 ) } \sum _ { i j } ^ { i j } \left[ y _ { i j } ^ { t } y _ { i j } ^ { t - 1 } + \left( 1 - y _ { i j } ^ { t } \right) \left( 1 - y _ { i j } ^ { t - 1 } \right) \right] } \\ { \text { Reciprocidad: } } & { s _ { 3 } \left( \mathbf { y } ^ { t } , \mathbf { y } ^ { t - 1 } \right) = n \sum _ { i j } y _ { j i } ^ { t } y _ { i j } ^ { t - 1 } / \sum _ { i j } y _ { i j } ^ { t - 1 } } \\ { \text { Transitividad: } } & { s _ { 4 } \left( \mathbf { y } ^ { t } , \mathbf { y } ^ { t - 1 } \right) = n \sum _ { i j k } ^ { i j } y _ { i k } ^ { t } y _ { i j } ^ { t - 1 } y _ { j k } ^ { t - 1 } } \end{array}$$
+
+Este modelo puede ser extendido para que se permitan relaciones múltiples, atributos de nodos y dependencias de Markov de orden $K$ de la forma:
+
+$$
+\operatorname{\mathcal{P}}\left(Y^{K+1}, Y^{K+2}, \ldots, Y^{T} | Y^{1}, \ldots, Y^{K}\right)=\prod_{t=K+1}^{T} \operatorname{\mathcal{P}}\left(Y^{t} | Y^{t-K}, \ldots, Y^{t-1}\right)
+$$
+donde
+$$
+\operatorname{\mathcal{P}}\left(Y^{t} | Y^{t-K}, \ldots, Y^{t-1}\right)=\frac{1}{Z} \exp \left\{\sum_{k} \beta_{k} s_{k}\left(Y^{t}, \ldots, Y^{t-K}\right)\right\}\right.
+$$
+
+La distribución conjunta de los primeros K grafos puede ser representada por un ERGM para el primer grafo y un modelo de dependencia de Markov de grado $(k-1)$ discreto para $Y_k$. 
+
+En este capitulo explicamos que son los grafos, vimos que se pueden generar grafos a partir de un proceso aleatorio, en particular con cadenas de Markov. Vimos que existen varias distribuciones de probabilidad para generar grafos aleatorios y finalmente vimos que podemos utilizar estadísticas lineales orientadas a aristas para generar nuestras matrices de adyacencia. Finalmente vimos que este concepto se puede extender a grafos aleatorios dinámicos y vimos algunas útiles estadísticas.
+
+En el siguiente capitulo veremos como funciona la regresión logística de los modelos lineales y así pondremos las bases de como funcionan los modelos de grafos aleatorios exponenciales.

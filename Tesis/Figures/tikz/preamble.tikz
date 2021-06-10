@@ -1,0 +1,18 @@
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{shapes,fit}
+
+\pgfdeclarelayer{edgelayer}
+\pgfdeclarelayer{nodelayer}
+\pgfsetlayers{edgelayer,nodelayer,main}
+
+\tikzstyle{none}=[inner sep=0pt]
+\tikzstyle{node}=[circle,draw=black!100,fill=gray!20]
+\tikzstyle{split-node}=[circle split,draw=black!100,fill=gray!20,rotate=90]
+\tikzstyle{undir-edge}=[-,draw=black!100,ultra thick]
+\tikzstyle{dir-edge}=[->,draw=black!100,ultra thick]
+\tikzstyle{label}=[rectangle,draw=black!100,fill=white!100]
+\tikzstyle{simple-label}=[rectangle,draw=white!100,fill=white!100]
+\tikzstyle{label-edge}=[->,dashed,draw=black!100,thick]
+\tikzstyle{dotted}=[-,dashed,draw=black!20,thick]
+\tikzstyle{big-arrow}=[single arrow,draw=black,fill=black!10,minimum height=1.5cm]

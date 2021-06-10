@@ -1,0 +1,37 @@
+\begin{tikzpicture}[scale=2]
+	\begin{pgfonlayer}{nodelayer}
+        \node [style=node] (7) at (12.5, 4) {};
+        \node [style=node] (8) at (10.5, 3) {};
+        \node [style=node] (9) at (14.5, 3) {};
+        \node [style=node] (10) at (9.5, 2) {};
+        \node [style=node] (11) at (11.5, 2) {};
+        \node [style=node] (12) at (13.5, 2) {};
+        \node [style=node] (13) at (15.5, 2) {};
+        \node [style=node] (14) at (9, 1) {};
+        \node [style=node] (15) at (10, 1) {};
+        \node [style=node] (16) at (11, 1) {};
+        \node [style=node] (17) at (12, 1) {};
+        \node [style=node] (18) at (13, 1) {};
+        \node [style=node] (19) at (14, 1) {};
+        \node [style=node] (20) at (15, 1) {};
+        \node [style=node] (21) at (16, 1) {};
+        
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+        \draw [style=undir-edge] (7) to (8);
+        \draw [style=undir-edge] (7) to (9);
+        \draw [style=undir-edge] (8) to (10);
+        \draw [style=undir-edge] (8) to (11);
+        \draw [style=undir-edge] (9) to (12);
+        \draw [style=undir-edge] (9) to (13);
+        \draw [style=undir-edge] (10) to (14);
+        \draw [style=undir-edge] (10) to (15);
+        \draw [style=undir-edge] (11) to (16);
+        \draw [style=undir-edge] (11) to (17);
+        \draw [style=undir-edge] (12) to (18);
+        \draw [style=undir-edge] (12) to (19);
+        \draw [style=undir-edge] (13) to (20);
+        \draw [style=undir-edge] (13) to (21);
+        
+	\end{pgfonlayer}
+\end{tikzpicture}

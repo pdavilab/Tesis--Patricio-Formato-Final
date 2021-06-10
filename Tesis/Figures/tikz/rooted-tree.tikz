@@ -1,0 +1,56 @@
+\begin{tikzpicture}[scale=1.2]
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=node] (0) at (0, 3) {A};
+		\node [style=node] (1) at (-2, 2) {B};
+		\node [style=node] (2) at (2, 2) {C};
+        \node [style=node] (3) at (-2, 1) {D};
+        \node [style=node] (4) at (1, 1) {E};
+        \node [style=node] (5) at (3, 1) {F};
+        \node [style=node] (6) at (-2, 0) {G};
+        \node [style=node] (7) at (2, 0) {H};
+        \node [style=node] (8) at (3, 0) {I};
+        \node [style=node] (9) at (4, 0) {J};
+        \node [circle,dashed,draw=black!100,fit = (2) (4) (5) (7) (8) (9)] (subtree) {};
+        \node [style=label] (subtree-label) at (4, 3.5) {Subárbol en C};
+        \node [style=label] (children-label) at (3.5, 2) {Hijos de C};
+        \node [style=label] (father-label) at (0, 4) {Padre de C};
+        \node [style=label] (ancestor-label) at (1.5, 3.5) {Ancestros de F};
+        \node [style=label] (leave-label) at (0, -.75) {Hojas del árbol};
+        
+        \node [] (level-label-0) at (-3, 3) {Nivel 0};
+        \node [] (level-label-00) at (4, 3) {};
+        \node [] (level-label-1) at (-3, 2) {Nivel 1};
+        \node [] (level-label-11) at (4, 2) {};
+        \node [] (level-label-2) at (-3, 1) {Nivel 2};
+        \node [] (level-label-22) at (4, 1) {};
+        \node [] (level-label-3) at (-3, 0) {Nivel 3};
+        \node [] (level-label-33) at (4, 0) {};
+        
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=undir-edge] (0) to (1);
+		\draw [style=undir-edge] (0) to (2);
+		\draw [style=undir-edge] (1) to (3);
+		\draw [style=undir-edge] (2) to (4);
+		\draw [style=undir-edge] (2) to (5);   
+        \draw [style=undir-edge] (3) to (6);
+        \draw [style=undir-edge] (5) to (7);
+        \draw [style=undir-edge] (5) to (8);
+        \draw [style=undir-edge] (5) to (9);
+        \draw [style=label-edge] (subtree-label) to (subtree);
+        \draw [style=label-edge] (children-label) to (4);
+        \draw [style=label-edge] (children-label) to (5);
+        \draw [style=label-edge] (father-label) to (0);
+        \draw [style=label-edge] (ancestor-label) to (0);
+        \draw [style=label-edge] (ancestor-label) to (2);
+        \draw [style=label-edge] (leave-label) to (6);
+        \draw [style=label-edge] (leave-label) to (7);
+        \draw [style=label-edge] (leave-label) to (8);
+        \draw [style=label-edge] (leave-label) to (9);
+        \draw [style=dotted] (level-label-0) to (level-label-00);
+        \draw [style=dotted] (level-label-1) to (level-label-11);
+        \draw [style=dotted] (level-label-2) to (level-label-22);
+        \draw [style=dotted] (level-label-3) to (level-label-33);
+        
+	\end{pgfonlayer}
+\end{tikzpicture}
